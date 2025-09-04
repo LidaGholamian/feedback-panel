@@ -6,13 +6,24 @@ import { auth } from "@/lib/auth";
 
 const Page = async () => {
   const session = await auth();
+
   if (!session) redirect("/sign-in");
+
+  const email = session.user.email;
+
+  if (email === "admin@dorehami.dev") {
+    redirect("/admin");
+  } else if (email === "user@dorehami.dev") {
+    redirect("/comments");
+  } else {
+    redirect("/sign-in");
+  }
 
   return (
     <>
       <div className="bg-gray-100 rounded-lg p-4 text-center mb-6">
         <p className="text-gray-600">Signed in as:</p>
-        <p className="font-medium">{session.user?.email}</p>
+        <p className="font-medium">{session!.user?.email}</p>
       </div>
 
       <SignOut />
