@@ -1,0 +1,23 @@
+'use client'
+
+import { signOut } from "next-auth/react"
+import { Button } from "../ui/button";
+import { BUTTON_SIZE, BUTTON_VARIANT } from "../ui/button/Button.types";
+
+export const SignOut= () => {
+    const handleSignout = async () => {
+        await signOut();
+    }
+
+    return (
+      <div className="flex justify-center">
+        <Button
+          variant={BUTTON_VARIANT.ERROR}
+          size={BUTTON_SIZE.MEDIUM}
+          onClick={handleSignout}
+        >
+          Sign Out
+        </Button>
+      </div>
+    );
+}
