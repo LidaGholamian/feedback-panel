@@ -20,6 +20,8 @@ model User {
   // Optional for WebAuthn support
   Authenticator Authenticator[]
 
+  comments      Comment[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -79,4 +81,14 @@ model Authenticator {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, credentialID])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content   String
+  fileUrl   String
+  status    String   @default("pending") // pending / approved / rejected
+  createdAt DateTime @default(now())
 }
