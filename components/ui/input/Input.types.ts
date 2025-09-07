@@ -1,21 +1,28 @@
-import React from 'react'
-import {UseFormRegister} from 'react-hook-form'
+import { FieldErrors, UseFormRegister } from "react-hook-form";
 
-export interface InputProps {
-  label?: string | React.ReactNode
-  type: 'text' | 'password' | 'number' | 'tel' | 'email'
-  register: UseFormRegister<any> | (() => void)
-  errors?: any
-  name: string
-  className?: string
-  placeholder?: string
-  disabled?: boolean
-  isLoading?: boolean
-  handleChange?: (text: string) => void
-  infoText?: string
-  value?: string | number
-  inputStyle?: string
-  min?: number
-  max?: number
-  required?: boolean
+interface CommonProps {
+  name: string;
+  label?: string;
+  placeholder?: string;
+  disabled?: boolean;
+  supportText?: string;
+  onRemove?: () => void;
+  className?: string;
+  inputStyle?: string;
 }
+
+export interface RHFMode extends CommonProps {
+  register: UseFormRegister<any>;
+  errors?: FieldErrors<any>;
+  value?: never;
+  onChange?: never;
+}
+
+export interface ManualMode extends CommonProps {
+  value: string;
+  onChange: (text: string) => void;
+  errors?: string;
+  register?: never;
+}
+
+export type InputProps = RHFMode | ManualMode;

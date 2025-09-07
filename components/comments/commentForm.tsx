@@ -1,33 +1,43 @@
 "use client";
 import { useForm } from "react-hook-form";
-import Input from "@/components/ui/input";
+
 import { Button} from "@/components/ui/button";
 import { BUTTON_SIZE, BUTTON_VARIANT } from "../ui/button/Button.types";
 import { CommentFormProps } from "./commentForm.type";
+import { FileUpload } from "../ui/fileUplaod/fileUpload";
+import { Input } from "../ui/input/Input";
+
+
 
 export const CommentForm = ({ userEmail }: { userEmail: string }) => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<CommentFormProps>();
 
   const onSubmit = async (data: CommentFormProps) => {
+    if (!data.content.trim()) return;
+
     const formData = new FormData();
     formData.append("content", data.content);
     formData.append("email", userEmail);
+
     if (data.file && data.file.length > 0) {
       formData.append("file", data.file[0]);
     }
 
-    const res = await fetch("/api/comment/upload", {
+    const res = await fetch("/api/comments/upload", {
       method: "POST",
       body: formData,
     });
 
-    const json = await res.json();
-    console.log(json);
+    if (res.ok) {
+      reset();
+    }
   };
+
 
   return (
     <div className="w-full flex justify-center mt-10">
@@ -36,24 +46,16 @@ export const CommentForm = ({ userEmail }: { userEmail: string }) => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input
             label="Comment"
-            type="text"
             placeholder="Write Your Comment"
             name="content"
-            register={register}
             errors={errors}
-            required
+            register={register}
           />
-          <div className="flex flex-col">
-            <label className="mb-2 font-semibold text-gray-700 cursor-pointer">
-              Attach File
-            </label>
-            <input
-              type="file"
-              {...register("file")}
-              accept=".pdf,image/*"
-              className="border border-gray-300 rounded-md p-2 cursor-pointer"
-            />
-          </div>
+          <FileUpload
+            name="file"
+            register={register}
+            label="Attachment File (PDF or Image)"
+          />
           {errors.content && (
             <p className="text-red-500">please write a message</p>
           )}
