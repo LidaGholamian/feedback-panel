@@ -1,6 +1,6 @@
 import { Button } from "../ui/button";
 import { BUTTON_SIZE, BUTTON_VARIANT } from "../ui/button/Button.types";
-import Input from "../ui/input";
+import { Input } from "../ui/input";
 import { credentialsSignInAction } from "./actions";
 
 export const SigninForm = () => {
@@ -10,14 +10,12 @@ export const SigninForm = () => {
           name="email"
           placeholder="Email"
           type="email"
-          required
           register={() => {}}
         />
         <Input
           name="password"
           placeholder="Password"
           type="password"
-          required
           register={() => {}}
         />
         <Button

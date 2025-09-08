@@ -1,60 +1,73 @@
 import React from "react";
 import classNames from "classnames";
-import { InputProps, ManualMode, RHFMode} from "./Input.types";
 
+import { InputProps } from "./Input.types";
 
-
-export const Input: React.FC<InputProps> = (props) => {
-  const {
-    name,
-    label,
-    placeholder,
-    disabled,
-    className,
-  } = props;
-
-  const isRHF = typeof (props as RHFMode).register === "function"
-
+export const Input: React.FC<InputProps> = ({
+  disabled,
+  name,
+  errors,
+  register,
+  placeholder,
+  className,
+  type,
+  label,
+  isLoading,
+  handleChange,
+  infoText,
+  value,
+  inputStyle,
+  min,
+  max,
+  rightElement,
+}) => {
   return (
     <div className={classNames(className)}>
-      {label && (
-        <div
-          className={classNames(
-            "text-black font-bold mb-2 text-left text-base"
-          )}
-        >
+      {label ? (
+        <div className="text-secondary-black mb-2 text-left text-base leading-5 font-medium">
           {label}
         </div>
-      )}
-
+      ) : null}
       <div
         className={classNames(
-          "border-gray-300 flex h-14 items-center rounded-lg border px-4",
+          "border-gray-fog flex h-14 items-center justify-between rounded-lg border",
           {
-            "bg-white cursor-pointer": !disabled,
-            "bg-gray-400": disabled,
+            ["bg-main-surface cursor-pointer"]: !disabled,
+            ["bg-secondary-moonlightSilver"]: disabled,
+            ["border-secondary-red"]: errors && errors[name],
           },
+          inputStyle
         )}
       >
-        {isRHF ? (
-          <input
-            id={name}
-            placeholder={placeholder}
-            disabled={disabled}
-            {...(props as RHFMode).register(name)}
-            className="placeholder:text-gray-cloudy max-w-full grow outline-hidden placeholder:text-sm"
-          />
-        ) : (
-          <input
-            id={name}
-            placeholder={placeholder}
-            disabled={disabled}
-            value={(props as ManualMode).value}
-            onChange={(e) => (props as ManualMode).onChange(e.target.value)}
-            className="placeholder:text-gray-cloudy max-w-full grow outline-hidden placeholder:text-sm"
-          />
-        )}
+        <input
+          min={min}
+          max={max}
+          autoComplete="off"
+          disabled={disabled}
+          placeholder={placeholder}
+          type={type}
+          id={name}
+          name={name}
+          value={value}
+          onChange={
+            handleChange ? (e) => handleChange(e.target.value) : undefined
+          }
+          {...register(name)}
+          onWheel={(e) => e.currentTarget.blur()}
+          className="placeholder:text-gray-cloudy max-w-full grow px-4 outline-hidden placeholder:text-sm placeholder:font-normal"
+        />
+        {rightElement}
       </div>
+      {errors && errors[name] ? (
+        <p className="text-secondary-red mt-1 px-2 text-xs">
+          <span>{errors[name].message}</span>
+        </p>
+      ) : null}
+      {infoText && (
+        <p className="text-primary-medium mt-[2px] text-xs">
+          <span>{infoText}</span>
+        </p>
+      )}
     </div>
   );
 };

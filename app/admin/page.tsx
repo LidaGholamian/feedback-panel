@@ -10,7 +10,7 @@ export default async function AdminPage() {
     redirect("/sign-in");
 
   return (
-    <div>
+    <div className="flex flex-col justify-center items-center w-full gap-20">
       <h1>Admin page</h1>
       <p>Welcome, {session.user?.email}</p>
       <SignOut />
