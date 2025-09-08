@@ -2,17 +2,18 @@
 import React, { useState } from "react";
 import { Button } from "../button";
 import { BUTTON_VARIANT } from "../button/Button.types";
-import { FieldValues} from "react-hook-form";
+import { FieldValues } from "react-hook-form";
 import { FileUploadProps } from "./fileUpload.types";
-
 
 export function FileUpload<TFormValues extends FieldValues>({
   name,
   register,
+  setFile,
   accept = ".pdf,image/*",
-  label = 'choose file',
+  label = "Choose file",
 }: FileUploadProps<TFormValues>) {
   const [fileName, setFileName] = useState<string>("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   return (
     <div className="flex flex-col">
@@ -29,11 +30,12 @@ export function FileUpload<TFormValues extends FieldValues>({
         id={name}
         type="file"
         accept={accept}
-        {...register(name)}
         className="hidden"
         onChange={(e) => {
-          if (e.target.files?.[0]) {
-            setFileName(e.target.files[0].name);
+          const selected = e.target.files?.[0];
+          if (selected) {
+            setFileName(selected.name);
+            setFile(selected);
           }
         }}
       />
@@ -44,7 +46,7 @@ export function FileUpload<TFormValues extends FieldValues>({
           variant={BUTTON_VARIANT.SURFACE}
           onClick={() => document.getElementById(name)?.click()}
         >
-          choose file
+          Choose file
         </Button>
         {fileName && (
           <span className="text-sm text-gray-600 truncate max-w-[200px]">

@@ -10,13 +10,15 @@ export const config = {
 };
 
 export async function POST(req: NextRequest) {
+
   const uploadDir = path.join(process.cwd(), "public/uploads");
   if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
   const form = formidable({ multiples: false, uploadDir, keepExtensions: true });
 
   return new Promise<NextResponse>((resolve, reject) => {
-    form.parse(req as unknown as any, (err, fields, files) => {
+
+    form.parse(req as any, (err, fields, files) => {
       if (err) return reject(NextResponse.json({ error: err.message }, { status: 500 }));
 
       const fileField = files.file;

@@ -5,4 +5,5 @@ export interface FileUploadProps<TFormValues extends FieldValues> {
   register: UseFormRegister<TFormValues>;
   accept?: string;
   label?: string;
+  setFile: React.Dispatch<React.SetStateAction<File | null>>;
 }
