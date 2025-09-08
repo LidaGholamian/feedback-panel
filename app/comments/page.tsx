@@ -112,7 +112,6 @@ export default function CommentForm() {
         )}
       </div>
 
-      {/* فرم ارسال کامنت */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 w-[550px]">
         <Input
           label="Your Comment"
