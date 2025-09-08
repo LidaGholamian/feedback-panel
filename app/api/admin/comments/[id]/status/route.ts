@@ -2,13 +2,10 @@ import { NextResponse } from "next/server";
 import db from "@/lib/db";
 import { auth } from "@/lib/auth";
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   const session = await auth();
 
-  if (!session?.user?.email || session.user.email !== process.env.ADMIN_EMAIL) {
+  if (!session || session.user?.email !== "admin@dorehami.dev") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
