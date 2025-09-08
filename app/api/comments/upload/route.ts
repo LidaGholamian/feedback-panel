@@ -1,48 +1,40 @@
-import { NextRequest, NextResponse } from "next/server";
-import formidable, { File } from "formidable";
-import path from "path";
+// app/api/comments/upload/route.ts
+import { NextResponse } from "next/server";
 import fs from "fs";
+import path from "path";
 
 export const config = {
   api: {
-    bodyParser: false,
+    bodyParser: false, // چون از FormData استفاده می‌کنیم
   },
 };
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
+  try {
+    const data = await req.formData(); // native FormData
+    const file = data.get("file") as File | null;
 
-  const uploadDir = path.join(process.cwd(), "public/uploads");
-  if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+    if (!file) {
+      return NextResponse.json({ error: "No file selected" }, { status: 400 });
+    }
 
-  const form = formidable({ multiples: false, uploadDir, keepExtensions: true });
+    // بررسی پسوند فایل
+    const allowedExt = /\.(jpg|jpeg|png|gif|pdf)$/i;
+    if (!file.name.match(allowedExt)) {
+      return NextResponse.json({ error: "Only images or PDF allowed" }, { status: 400 });
+    }
 
-  return new Promise<NextResponse>((resolve, reject) => {
+    const uploadDir = path.join(process.cwd(), "public/uploads");
+    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
-    form.parse(req as any, (err, fields, files) => {
-      if (err) return reject(NextResponse.json({ error: err.message }, { status: 500 }));
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-      const fileField = files.file;
-      let file: File;
+    const filePath = path.join(uploadDir, file.name);
+    await fs.promises.writeFile(filePath, buffer);
 
-      if (Array.isArray(fileField)) {
-        file = fileField[0];
-      } else if (fileField) {
-        file = fileField as File;
-      } else {
-        return reject(NextResponse.json({ error: "No file uploaded" }, { status: 400 }));
-      }
-
-      const allowedExt = /\.(jpg|jpeg|png|gif|pdf)$/i;
-      if (!file.originalFilename?.match(allowedExt)) {
-        return reject(NextResponse.json({ error: "Only images or PDF allowed" }, { status: 400 }));
-      }
-
-      resolve(
-        NextResponse.json({
-          filePath: `/uploads/${path.basename(file.filepath)}`,
-          fields,
-        })
-      );
-    });
-  });
+    return NextResponse.json({ filePath: `/uploads/${file.name}` });
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message || "Upload failed" }, { status: 500 });
+  }
 }

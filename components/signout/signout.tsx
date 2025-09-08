@@ -3,11 +3,16 @@
 import { signOut } from "next-auth/react"
 import { Button } from "../ui/button";
 import { BUTTON_SIZE, BUTTON_VARIANT } from "../ui/button/Button.types";
+import { useRouter } from "next/navigation";
+
 
 export const SignOut= () => {
+  const router = useRouter();
     const handleSignout = async () => {
-        await signOut();
-    }
+
+      await signOut({ redirect: false });
+      router.replace("/sign-in");
+    };
 
     return (
       <div className="flex justify-center">

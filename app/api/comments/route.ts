@@ -7,8 +7,8 @@ export async function POST(req: Request) {
   const session = await auth();
 
   if (!session || session.user?.email !== "user@dorehami.dev" || !session.user?.id) {
-  return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-}
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
 
   const { content, fileUrl } = await req.json();
 
@@ -27,17 +27,27 @@ export async function POST(req: Request) {
   });
 
   const transporter = nodemailer.createTransport({
-  host: "localhost",
-  port: 1025,
-  secure: false,
-});
+    host: "localhost",
+    port: 1025,
+    secure: false,
+  });
 
-await transporter.sendMail({
-  from: '"Dorehami" <no-reply@dorehami.dev>',
-  to: session.user.email,
-  subject: "Your comment has been submitted",
-  text: "Your comment has been successfully submitted and is awaiting admin approval.",
-});
+  await transporter.sendMail({
+    from: '"Dorehami" <no-reply@dorehami.dev>',
+    to: session.user.email,
+    subject: "Your comment has been submitted",
+    text: "Your comment has been successfully submitted and is awaiting admin approval.",
+  });
 
   return NextResponse.json(comment);
+}
+
+export async function GET() {
+  const comments = await db.comment.findMany({
+    where: { status: "approved" },
+    orderBy: { createdAt: "desc" },
+    include: { user: { select: { name: true, email: true } } },
+  });
+
+  return NextResponse.json(comments);
 }
