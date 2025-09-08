@@ -1,7 +1,7 @@
-// app/api/comments/route.ts
 import { NextResponse } from "next/server";
 import db from "@/lib/db";
 import { auth } from "@/lib/auth";
+import nodemailer from "nodemailer";
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -25,6 +25,19 @@ export async function POST(req: Request) {
       status: "pending",
     },
   });
+
+  const transporter = nodemailer.createTransport({
+  host: "localhost",
+  port: 1025,
+  secure: false,
+});
+
+await transporter.sendMail({
+  from: '"Dorehami" <no-reply@dorehami.dev>',
+  to: session.user.email,
+  subject: "Your comment has been submitted",
+  text: "Your comment has been successfully submitted and is awaiting admin approval.",
+});
 
   return NextResponse.json(comment);
 }
