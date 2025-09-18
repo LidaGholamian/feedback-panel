@@ -12,12 +12,11 @@ export const SignInClient = () => {
     <div className="w-full max-w-sm mx-auto space-y-6">
       <h1 className="font-bold text-2xl text-center">Sign In</h1>
 
-      {/* Keycloak button */}
       <div className="flex justify-center items-center">
         <Button
           variant={BUTTON_VARIANT.BLACK}
           size={BUTTON_SIZE.MEDIUM}
-          onClick={() => signIn("keycloak")}
+          onClick={() => signIn("keycloak", { callbackUrl: "/" })}
         >
           Sign in with Dorehami Account
         </Button>

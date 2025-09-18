@@ -1,24 +1,22 @@
-// app/api/comments/upload/route.ts
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
 export const config = {
   api: {
-    bodyParser: false, // چون از FormData استفاده می‌کنیم
+    bodyParser: false,
   },
 };
 
 export async function POST(req: Request) {
   try {
-    const data = await req.formData(); // native FormData
+    const data = await req.formData();
     const file = data.get("file") as File | null;
 
     if (!file) {
       return NextResponse.json({ error: "No file selected" }, { status: 400 });
     }
 
-    // بررسی پسوند فایل
     const allowedExt = /\.(jpg|jpeg|png|gif|pdf)$/i;
     if (!file.name.match(allowedExt)) {
       return NextResponse.json({ error: "Only images or PDF allowed" }, { status: 400 });

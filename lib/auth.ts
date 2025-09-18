@@ -3,16 +3,12 @@ import { v4 as uuid} from "uuid";
 import { encode as defaultEncode } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials"
 import Keycloak from "next-auth/providers/keycloak"
-import db from "./db"
 import { PrismaAdapter } from "@auth/prisma-adapter"
+
+import db from "./db"
 import { schema } from "./schema"
 
 const adapter = PrismaAdapter(db)
-
-const users = [
-        { id: "1", email: "admin@dorehami.dev", password: "Test1234" , role: 'admin'},
-        { id: "2", email: "user@dorehami.dev", password: "User1234", role: 'user' }
-      ]
 
 export const { auth, handlers,signIn, signOut } = NextAuth({adapter, providers: [
     Keycloak({

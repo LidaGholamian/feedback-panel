@@ -13,7 +13,6 @@ export function FileUpload<TFormValues extends FieldValues>({
   label = "Choose file",
 }: FileUploadProps<TFormValues>) {
   const [fileName, setFileName] = useState<string>("");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   return (
     <div className="flex flex-col">
