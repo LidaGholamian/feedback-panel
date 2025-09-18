@@ -7,7 +7,6 @@ import { FileUploadProps } from "./fileUpload.types";
 
 export function FileUpload<TFormValues extends FieldValues>({
   name,
-  register,
   setFile,
   accept = ".pdf,image/*",
   label = "Choose file",
